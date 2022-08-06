@@ -1,15 +1,22 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Button from '../components/forms/Button';
 import Input from '../components/forms/Input';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { AuthContext } from '../context/auth';
+import { saveInLocalStorage } from '../helpers/auth';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
+	const [auth, setAuth] = useContext(AuthContext);
+
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("")
 	const [name, setName] = useState("")
 	const [confirm, setConfirm] = useState("")
 	const [loading, setLoading] = useState(false);
+
+	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -90,6 +97,10 @@ const Register = () => {
 								loading={loading}
 							/>
 						</form>
+
+						<p className='mt-3'>
+							Already registered? <Link to="/login">Login</Link>
+						</p>
 					</div>
 				</div>
 			</div>
