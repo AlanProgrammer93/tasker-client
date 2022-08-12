@@ -12,28 +12,31 @@ import ForgotPassword from "./pages/ForgotPassword";
 import { Toaster } from "react-hot-toast";
 import Dashboard from "./pages/dashboard";
 import Tasks from "./pages/Tasks";
+import { TaskProvider } from "./context/task";
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Main />
-        <Toaster toastOptions={{duration: 2000}} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          
-          <Route path="/dashboard" element={<PrivateRoute />}>
-            <Route path="" element={<Dashboard />} />
-            <Route path="tasks" element={<Tasks />} />
+      <TaskProvider>
+        <BrowserRouter>
+          <Main />
+          <Toaster toastOptions={{duration: 2000}} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            
+            <Route path="/dashboard" element={<PrivateRoute />}>
+              <Route path="" element={<Dashboard />} />
+              <Route path="tasks" element={<Tasks />} />
 
-          </Route>
+            </Route>
 
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TaskProvider>
     </AuthProvider>
   );
 }

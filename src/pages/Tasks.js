@@ -1,14 +1,31 @@
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import CreateTask from '../components/task/CreateTask';
+import TaskList from '../components/task/TaskList';
+import UpdateTask from '../components/task/UpdateTask';
+import { TaskContext } from '../context/task';
+import socket from '../socket';
 
 const Tasks = () => {
-    const [content, setContent] = useState("");
+    const [task, setTask] = useContext(TaskContext);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        loadTasks();
+    }, [])
+
+    useEffect(() => {
+        socket.on("new-task", task => {
+            setTask(prev => ({ ...prev, tasks: [task, ...prev.tasks] }))
+        })
+
+        return () => socket.off("new-task")
+    }, [])
+
+    const loadTasks = async () => {
         try {
-            const {data} = await axios.post("/task", { content })
-            
+            const { data } = await axios.get("/tasks/1");
+            //setTasks(data);
+            setTask({ ...task, tasks: data })
         } catch (error) {
             console.log(error);
         }
@@ -16,18 +33,9 @@ const Tasks = () => {
 
     return (
         <>
-            <form className='d-flex justify-content' onSubmit={handleSubmit}>
-                <textarea 
-                    maxLength="160"
-                    className='form-control m-1'
-                    value={content}
-                    onChange={e => setContent(e.target.value)}
-                    placeholder='Write something...' 
-                />
-                <button type='submit' className='btn btn-primary m-1'>
-                    Submit
-                </button>
-            </form>
+            <CreateTask />
+            <TaskList />
+            <UpdateTask />
         </>
     )
 }
