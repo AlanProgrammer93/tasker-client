@@ -57,11 +57,10 @@ const Register = () => {
 	return (
 		<div
 			className='d-flex justify-content-center align-items-center vh-100'
-			style={{ marginTop: "-100px" }}
 		>
 			<div className='container'>
 				<div className='row'>
-					<div className='col-md-6 offset-md-3'>
+					<div className='col-md-6 offset-md-3 authbox'>
 						<h1 className='fw-bold mb-3'>Register</h1>
 
 						<form>

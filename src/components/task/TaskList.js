@@ -6,6 +6,7 @@ import axios from 'axios';
 import useSearch from '../../hooks/useSearch';
 import Timer from './Timer';
 import SearchBar from '../forms/SearchBar';
+import Masonry from 'react-masonry-css'
 
 dayjs.extend(require("dayjs/plugin/relativeTime"));
 
@@ -16,7 +17,7 @@ const TaskList = () => {
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
-    
+
     const { keyword, setKeyword, filteredTasks } = useSearch();
 
     useEffect(() => {
@@ -24,13 +25,13 @@ const TaskList = () => {
     }, [])
 
     useEffect(() => {
-        if (page === 1) return 
+        if (page === 1) return
         loadTasks()
     }, [page])
 
     const getTotal = async () => {
         try {
-            const {data} = await axios.get("/task-count");
+            const { data } = await axios.get("/task-count");
             setTotal(data)
         } catch (error) {
             console.log(error);
@@ -40,7 +41,7 @@ const TaskList = () => {
     const loadTasks = async () => {
         try {
             setLoading(true)
-            const {data} = await axios.get(`/tasks/${page}`)
+            const { data } = await axios.get(`/tasks/${page}`)
             setTask(prev => ({ ...prev, tasks: [...prev.tasks, ...data] }))
             setLoading(false)
         } catch (error) {
@@ -59,8 +60,8 @@ const TaskList = () => {
 
                     <SearchBar keyword={keyword} setKeyword={setKeyword} />
 
-                    <pre 
-                        className='text-center' 
+                    <pre
+                        className='text-center'
                         style={{
                             textDecoration: 'underline gold',
                             textDecorationThickness: "3px"
@@ -69,28 +70,34 @@ const TaskList = () => {
                         {task?.tasks.length} tasks
                     </pre>
 
-                    {
-                        filteredTasks.map((task) => (
-                            <div 
-                                key={task._id} 
-                                style={{
-                                    background: auth?.user?._id === task?.postedBy?._id ? "#f2ffe6" : "#ffe6e6"
-                                }}
-                                className="rounded shadow p-2 m-2 tasklist"
-                                onClick={() => handleClick(task)}
-                            >
-                                <p>{task.task}</p>
-                                
-                                <p 
-                                    className='float-end' 
-                                    style={{ fontSize: "8px", marginTop: "-15px" }}
+                    <Masonry
+                        breakpointCols={3}
+                        className="my-masonry-grid"
+                        columnClassName='my-masonry-grid_column'
+                    >
+                        {
+                            filteredTasks.map((task) => (
+                                <div
+                                    key={task._id}
+                                    style={{
+                                        background: auth?.user?._id === task?.postedBy?._id ? "#f2ffe6" : "#ffe6e6"
+                                    }}
+                                    className="rounded shadow p-2 m-2 tasklist"
+                                    onClick={() => handleClick(task)}
                                 >
-                                    <Timer time={task.createdAt} /> by <b>{task?.postedBy?.name}</b>
-                                    <b>{task?.postedBy?.name}</b>
-                                </p>
-                            </div>
-                        ))
-                    }
+                                    <p>{task.task}</p>
+
+                                    <p
+                                        className='float-end'
+                                        style={{ fontSize: "8px", marginTop: "-15px" }}
+                                    >
+                                        <Timer time={task.createdAt} /> by <b>{task?.postedBy?.name}</b>
+                                        <b>{task?.postedBy?.name}</b>
+                                    </p>
+                                </div>
+                            ))
+                        }
+                    </Masonry>
 
                     {
                         task?.tasks.length < total && (
